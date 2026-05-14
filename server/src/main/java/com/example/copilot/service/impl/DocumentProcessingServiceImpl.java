@@ -1,4 +1,7 @@
-package com.example.copilot.service;
+package com.example.copilot.service.impl;
+
+import com.example.copilot.service.DocumentProcessingService;
+import com.example.copilot.service.EmbeddingService;
 
 import com.example.copilot.common.DocumentStatusEnum;
 import com.example.copilot.entity.Document;

@@ -1,4 +1,6 @@
-package com.example.copilot.service;
+package com.example.copilot.service.impl;
+
+import com.example.copilot.service.EmbeddingService;
 
 import com.example.copilot.config.AiProperties;
 import lombok.extern.slf4j.Slf4j;

@@ -1,4 +1,6 @@
-package com.example.copilot.rag;
+package com.example.copilot.rag.impl;
+
+import com.example.copilot.rag.RetrievalService;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.example.copilot.entity.ChatSession;

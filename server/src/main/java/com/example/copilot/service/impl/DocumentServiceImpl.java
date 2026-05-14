@@ -1,4 +1,7 @@
-package com.example.copilot.service;
+package com.example.copilot.service.impl;
+
+import com.example.copilot.service.DocumentService;
+import com.example.copilot.service.DocumentProcessingService;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.example.copilot.common.DocumentStatusEnum;

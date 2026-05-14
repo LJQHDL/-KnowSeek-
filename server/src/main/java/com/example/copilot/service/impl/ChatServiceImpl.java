@@ -1,8 +1,12 @@
-package com.example.copilot.service;
+package com.example.copilot.service.impl;
+
+import com.example.copilot.service.ChatService;
+import com.example.copilot.service.LlmAnswerService;
+import com.example.copilot.rag.RetrievalService;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.example.copilot.common.MessageRoleEnum;
 import com.example.copilot.config.AiProperties;
+import com.example.copilot.common.MessageRoleEnum;
 import com.example.copilot.dto.request.CreateChatSessionRequest;
 import com.example.copilot.dto.request.CreateMessageRequest;
 import com.example.copilot.dto.response.ChatReplyResponse;

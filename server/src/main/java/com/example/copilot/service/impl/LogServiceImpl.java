@@ -1,4 +1,6 @@
-package com.example.copilot.service;
+package com.example.copilot.service.impl;
+
+import com.example.copilot.service.LogService;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;

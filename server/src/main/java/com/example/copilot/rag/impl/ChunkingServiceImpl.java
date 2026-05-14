@@ -1,4 +1,6 @@
-package com.example.copilot.rag;
+package com.example.copilot.rag.impl;
+
+import com.example.copilot.rag.ChunkingService;
 
 import org.springframework.stereotype.Service;
 

@@ -1,4 +1,6 @@
-package com.example.copilot.service;
+package com.example.copilot.service.impl;
+
+import com.example.copilot.service.LlmAnswerService;
 
 import com.example.copilot.config.AiProperties;
 import com.example.copilot.dto.response.LlmAnswerResult;
