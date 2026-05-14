@@ -116,4 +116,9 @@ public class EvalCase {
     public void setErrorMessage(String errorMessage) {
         this.errorMessage = errorMessage;
     }
+
+    @Override
+    public String toString() {
+        return "EvalCase{id=" + id + ", evalRunId=" + evalRunId + ", retrievalHit=" + retrievalHit + ", retrievalRank=" + retrievalRank + ", score=" + score + "}";
+    }
 }

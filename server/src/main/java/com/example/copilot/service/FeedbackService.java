@@ -2,6 +2,8 @@ package com.example.copilot.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.example.copilot.common.ErrorCode;
+import com.example.copilot.common.FeedbackRatingEnum;
+import com.example.copilot.common.MessageRoleEnum;
 import com.example.copilot.entity.AnswerFeedback;
 import com.example.copilot.entity.Message;
 import com.example.copilot.exception.BusinessException;
@@ -28,10 +30,10 @@ public class FeedbackService {
         if (message == null) {
             throw new NotFoundException("消息不存在");
         }
-        if (!"assistant".equals(message.getRole())) {
+        if (!MessageRoleEnum.ASSISTANT.toDbValue().equals(message.getRole())) {
             throw new BusinessException(ErrorCode.VALIDATION_ERROR, "只能对 AI 回答提交反馈");
         }
-        if (rating == null || (!"up".equals(rating) && !"down".equals(rating))) {
+        if (rating == null || (!FeedbackRatingEnum.UP.toDbValue().equals(rating) && !FeedbackRatingEnum.DOWN.toDbValue().equals(rating))) {
             throw new BusinessException(ErrorCode.VALIDATION_ERROR, "反馈类型无效，必须为 up 或 down");
         }
 

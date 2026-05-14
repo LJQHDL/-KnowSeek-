@@ -1,6 +1,8 @@
 package com.example.copilot.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.example.copilot.common.DocumentStatusEnum;
+import com.example.copilot.common.DocumentTypeEnum;
 import com.example.copilot.dto.response.DocumentResponse;
 import com.example.copilot.entity.Document;
 import com.example.copilot.entity.KnowledgeBase;
@@ -58,7 +60,7 @@ public class DocumentService {
         document.setFileName(file.getOriginalFilename());
         document.setFileType(detectFileType(file.getOriginalFilename()));
         document.setStoragePath(storedPath.toString());
-        document.setStatus("UPLOADED");
+        document.setStatus(DocumentStatusEnum.UPLOADED.name());
         document.setCreatedAt(LocalDateTime.now());
         documentMapper.insert(document);
         documentProcessingService.processDocumentAsync(document.getId());
@@ -107,15 +109,15 @@ public class DocumentService {
     private String detectFileType(String fileName) {
         String lower = fileName == null ? "" : fileName.toLowerCase();
         if (lower.endsWith(".pdf")) {
-            return "PDF";
+            return DocumentTypeEnum.PDF.name();
         }
         if (lower.endsWith(".docx")) {
-            return "DOCX";
+            return DocumentTypeEnum.DOCX.name();
         }
         if (lower.endsWith(".md") || lower.endsWith(".markdown")) {
-            return "MARKDOWN";
+            return DocumentTypeEnum.MARKDOWN.name();
         }
-        return "UNKNOWN";
+        return DocumentTypeEnum.UNKNOWN.name();
     }
 
     private void deleteStoredFileQuietly(String storagePath) {

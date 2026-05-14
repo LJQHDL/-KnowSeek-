@@ -26,6 +26,9 @@ web/out/
 .DS_Store
 Thumbs.db
 
+# Reference materials (local only)
+*.pdf
+
 # Project docs (local only)
 AGENTS.md
 DESIGN.md

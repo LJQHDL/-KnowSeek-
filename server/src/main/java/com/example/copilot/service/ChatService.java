@@ -1,6 +1,7 @@
 package com.example.copilot.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.example.copilot.common.MessageRoleEnum;
 import com.example.copilot.config.AiProperties;
 import com.example.copilot.dto.request.CreateChatSessionRequest;
 import com.example.copilot.dto.request.CreateMessageRequest;
@@ -89,7 +90,7 @@ public class ChatService {
         ChatSession session = requireOwnedSession(userId, sessionId);
         Message userMessage = new Message();
         userMessage.setSessionId(session.getId());
-        userMessage.setRole("user");
+        userMessage.setRole(MessageRoleEnum.USER.toDbValue());
         userMessage.setContent(request.content());
         userMessage.setCreatedAt(LocalDateTime.now());
         messageMapper.insert(userMessage);
@@ -97,7 +98,7 @@ public class ChatService {
         RetrievalResult retrievalResult = retrievalService.retrieveTopChunks(sessionId, request.content(), aiProperties.getRetrievalTopK());
         Message assistantMessage = new Message();
         assistantMessage.setSessionId(session.getId());
-        assistantMessage.setRole("assistant");
+        assistantMessage.setRole(MessageRoleEnum.ASSISTANT.toDbValue());
         String fallbackAnswer = generateAssistantReply(retrievalResult.chunks());
         LlmAnswerResult llmResult = llmAnswerService.generateAnswer(request.content(), retrievalResult.chunks(), fallbackAnswer);
         assistantMessage.setContent(llmResult.content());

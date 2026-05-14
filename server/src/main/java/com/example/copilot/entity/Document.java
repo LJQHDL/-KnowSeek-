@@ -82,4 +82,9 @@ public class Document {
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
+
+    @Override
+    public String toString() {
+        return "Document{id=" + id + ", knowledgeBaseId=" + knowledgeBaseId + ", fileName='" + fileName + "', fileType='" + fileType + "', status='" + status + "'}";
+    }
 }

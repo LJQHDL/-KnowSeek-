@@ -55,4 +55,9 @@ public class ChatSession {
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
+
+    @Override
+    public String toString() {
+        return "ChatSession{id=" + id + ", userId=" + userId + ", knowledgeBaseId=" + knowledgeBaseId + ", title='" + title + "'}";
+    }
 }

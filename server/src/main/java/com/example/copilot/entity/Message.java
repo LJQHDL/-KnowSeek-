@@ -91,4 +91,9 @@ public class Message {
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
+
+    @Override
+    public String toString() {
+        return "Message{id=" + id + ", sessionId=" + sessionId + ", role='" + role + "', latencyMs=" + latencyMs + "}";
+    }
 }

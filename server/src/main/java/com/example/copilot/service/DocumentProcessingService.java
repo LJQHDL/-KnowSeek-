@@ -1,5 +1,6 @@
 package com.example.copilot.service;
 
+import com.example.copilot.common.DocumentStatusEnum;
 import com.example.copilot.entity.Document;
 import com.example.copilot.entity.DocumentChunk;
 import com.example.copilot.mapper.DocumentChunkMapper;
@@ -44,18 +45,18 @@ public class DocumentProcessingService {
         }
 
         try {
-            updateStatus(document, "PARSING", null);
+            updateStatus(document, DocumentStatusEnum.PARSING.name(), null);
             DocumentParser parser = documentParserFactory.getParser(document.getFileType());
             ParsedDocument parsedDocument = parser.parse(Path.of(document.getStoragePath()));
 
-            updateStatus(document, "INDEXING", null);
+            updateStatus(document, DocumentStatusEnum.INDEXING.name(), null);
             List<String> chunks = chunkingService.split(parsedDocument.content());
             List<float[]> embeddings = embeddingService.embed(chunks);
             saveChunks(document, chunks, embeddings, parsedDocument.metadataJson());
 
-            updateStatus(document, "READY", null);
+            updateStatus(document, DocumentStatusEnum.READY.name(), null);
         } catch (Exception ex) {
-            updateStatus(document, "FAILED", ex.getMessage());
+            updateStatus(document, DocumentStatusEnum.FAILED.name(), ex.getMessage());
         }
     }
 

@@ -47,7 +47,7 @@ public class AuthService {
         user.setEmail(request.email());
         user.setName(request.name());
         user.setPasswordHash(passwordEncoder.encode(request.password()));
-        user.setRole("USER");
+        user.setRole("USER"); // default role for new registration
         user.setCreatedAt(LocalDateTime.now());
         userMapper.insert(user);
 

@@ -64,4 +64,9 @@ public class AnswerFeedback {
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
+
+    @Override
+    public String toString() {
+        return "AnswerFeedback{id=" + id + ", messageId=" + messageId + ", userId=" + userId + ", rating='" + rating + "'}";
+    }
 }

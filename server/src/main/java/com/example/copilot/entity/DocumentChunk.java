@@ -91,4 +91,9 @@ public class DocumentChunk {
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
+
+    @Override
+    public String toString() {
+        return "DocumentChunk{id=" + id + ", documentId=" + documentId + ", knowledgeBaseId=" + knowledgeBaseId + ", chunkIndex=" + chunkIndex + "}";
+    }
 }

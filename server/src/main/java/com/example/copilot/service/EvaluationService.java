@@ -1,6 +1,7 @@
 package com.example.copilot.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.example.copilot.common.EvalStatusEnum;
 import com.example.copilot.config.AiProperties;
 import com.example.copilot.dto.request.CreateEvalRunRequest;
 import com.example.copilot.dto.response.EvalCaseResponse;
@@ -16,7 +17,6 @@ import com.example.copilot.mapper.EvalRunMapper;
 import com.example.copilot.mapper.KnowledgeBaseMapper;
 import com.example.copilot.rag.RetrievalService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -61,7 +61,7 @@ public class EvaluationService {
         EvalRun run = new EvalRun();
         run.setKnowledgeBaseId(knowledgeBaseId);
         run.setName(name);
-        run.setStatus("PENDING");
+        run.setStatus(EvalStatusEnum.PENDING.name());
         run.setTotalCases(caseRequests.size());
         run.setHitCount(0);
         run.setCreatedAt(LocalDateTime.now());
@@ -84,14 +84,32 @@ public class EvaluationService {
         return toResponse(run, cases);
     }
 
+    public List<EvalRunResponse> listRuns() {
+        return evalRunMapper.selectList(new LambdaQueryWrapper<EvalRun>()
+                        .orderByDesc(EvalRun::getCreatedAt))
+                .stream()
+                .map(r -> toResponse(r, List.of()))
+                .toList();
+    }
+
+    public EvalRunResponse getRunDetail(Long runId) {
+        EvalRun run = evalRunMapper.selectById(runId);
+        if (run == null) {
+            throw new NotFoundException("评测运行不存在");
+        }
+        List<EvalCase> cases = evalCaseMapper.selectList(new LambdaQueryWrapper<EvalCase>()
+                .eq(EvalCase::getEvalRunId, runId));
+        return toResponse(run, cases);
+    }
+
     private void executeRun(EvalRun run, List<EvalCase> cases) {
-        run.setStatus("RUNNING");
+        run.setStatus(EvalStatusEnum.RUNNING.name());
         run.setStartedAt(LocalDateTime.now());
         evalRunMapper.updateById(run);
 
         int hitCount = 0;
         double mrrSum = 0;
-        long totalLatency = 0;
+        Long totalLatency = 0L;
         double totalScore = 0;
         int validCases = 0;
 
@@ -110,7 +128,7 @@ public class EvaluationService {
 
                 double score = calculateScore(evalCase.getExpectedAnswer(), llmResult.content());
 
-                long latency = System.currentTimeMillis() - start;
+                Long latency = System.currentTimeMillis() - start;
 
                 String actualSourcesJson = toJson(retrieval.chunks());
 
@@ -135,7 +153,7 @@ public class EvaluationService {
             }
         }
 
-        run.setStatus("COMPLETED");
+        run.setStatus(EvalStatusEnum.COMPLETED.name());
         run.setFinishedAt(LocalDateTime.now());
         run.setHitCount(hitCount);
         run.setHitRate(validCases > 0 ? (double) hitCount / validCases : 0);
@@ -145,31 +163,8 @@ public class EvaluationService {
         evalRunMapper.updateById(run);
     }
 
-    public List<EvalRunResponse> listRuns() {
-        return evalRunMapper.selectList(new LambdaQueryWrapper<EvalRun>()
-                        .orderByDesc(EvalRun::getCreatedAt))
-                .stream()
-                .map(r -> toResponse(r, List.of()))
-                .toList();
-    }
-
-    public EvalRunResponse getRunDetail(Long runId) {
-        EvalRun run = evalRunMapper.selectById(runId);
-        if (run == null) {
-            throw new NotFoundException("评测运行不存在");
-        }
-        List<EvalCase> cases = evalCaseMapper.selectList(new LambdaQueryWrapper<EvalCase>()
-                .eq(EvalCase::getEvalRunId, runId));
-        return toResponse(run, cases);
-    }
-
     private boolean checkHit(String expectedSourcesJson, List<RetrievedChunkResponse> chunks) {
         if (expectedSourcesJson == null || expectedSourcesJson.isBlank()) return false;
-        Set<Long> retrievedDocIds = new HashSet<>();
-        for (RetrievedChunkResponse chunk : chunks) {
-            retrievedDocIds.add(chunk.documentId());
-        }
-        // Simple check: expected sources contain document IDs or names that match
         String lowerExpected = expectedSourcesJson.toLowerCase();
         for (RetrievedChunkResponse chunk : chunks) {
             if (lowerExpected.contains(String.valueOf(chunk.documentId()))) {

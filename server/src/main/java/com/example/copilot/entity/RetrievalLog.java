@@ -73,4 +73,9 @@ public class RetrievalLog {
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
+
+    @Override
+    public String toString() {
+        return "RetrievalLog{id=" + id + ", messageId=" + messageId + ", topK=" + topK + ", latencyMs=" + latencyMs + "}";
+    }
 }

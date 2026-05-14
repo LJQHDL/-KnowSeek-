@@ -55,4 +55,9 @@ public class KnowledgeBase {
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
+
+    @Override
+    public String toString() {
+        return "KnowledgeBase{id=" + id + ", ownerId=" + ownerId + ", name='" + name + "'}";
+    }
 }

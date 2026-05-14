@@ -127,4 +127,9 @@ public class EvalRun {
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
+
+    @Override
+    public String toString() {
+        return "EvalRun{id=" + id + ", knowledgeBaseId=" + knowledgeBaseId + ", name='" + name + "', status='" + status + "', hitRate=" + hitRate + ", mrr=" + mrr + "}";
+    }
 }
