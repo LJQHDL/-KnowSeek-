@@ -12,3 +12,13 @@ export async function register(payload: { email: string; name: string; password:
   const { data } = await api.post<ApiResponse<AuthResponse>>("/api/auth/register", payload);
   return data.data;
 }
+
+export async function getMe() {
+  const { data } = await api.get<ApiResponse<AuthResponse>>("/api/auth/me");
+  return data.data;
+}
+
+export async function refreshToken() {
+  const { data } = await api.post<ApiResponse<AuthResponse>>("/api/auth/refresh");
+  return data.data;
+}

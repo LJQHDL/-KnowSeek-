@@ -1,4 +1,4 @@
-import { FileText, LoaderCircle, Trash2, TriangleAlert } from "lucide-react";
+import { FileText, LoaderCircle, RefreshCw, Trash2, TriangleAlert } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { formatDate } from "@/lib/utils";
@@ -15,11 +15,15 @@ const statusTone: Record<string, string> = {
 export function DocumentList({
   documents,
   onDelete,
-  deletingId
+  onReindex,
+  deletingId,
+  reindexingId
 }: {
   documents: DocumentItem[];
   onDelete?: (id: number) => void;
+  onReindex?: (id: number) => void;
   deletingId?: number | null;
+  reindexingId?: number | null;
 }) {
   if (documents.length === 0) {
     return (
@@ -59,6 +63,18 @@ export function DocumentList({
           <div className="flex items-center gap-2">
             {document.status === "INDEXING" || document.status === "PARSING" ? (
               <LoaderCircle className="size-5 animate-spin text-accent" />
+            ) : null}
+            {onReindex && document.status === "READY" ? (
+              <Button
+                type="button"
+                variant="secondary"
+                className="px-3"
+                disabled={reindexingId === document.id}
+                onClick={() => onReindex(document.id)}
+                title="重建索引"
+              >
+                <RefreshCw className={`size-4 ${reindexingId === document.id ? "animate-spin" : ""}`} />
+              </Button>
             ) : null}
             {onDelete ? (
               <Button

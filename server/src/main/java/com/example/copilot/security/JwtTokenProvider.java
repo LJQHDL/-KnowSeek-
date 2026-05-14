@@ -39,6 +39,17 @@ public class JwtTokenProvider {
         return getClaims(token).getSubject();
     }
 
+    public String generateToken(String email) {
+        Instant now = Instant.now();
+        Instant expiry = now.plusMillis(expirationMillis);
+        return Jwts.builder()
+                .subject(email)
+                .issuedAt(Date.from(now))
+                .expiration(Date.from(expiry))
+                .signWith(secretKey)
+                .compact();
+    }
+
     public boolean validateToken(String token) {
         getClaims(token);
         return true;

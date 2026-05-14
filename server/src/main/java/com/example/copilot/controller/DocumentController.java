@@ -52,4 +52,11 @@ public class DocumentController {
         documentService.delete(principal.getId(), id);
         return ApiResponse.success();
     }
+
+    @PostMapping("/documents/{id}/reindex")
+    public ApiResponse<Void> reindex(@AuthenticationPrincipal UserPrincipal principal,
+                                      @PathVariable Long id) {
+        documentService.reindex(principal.getId(), id);
+        return ApiResponse.success();
+    }
 }

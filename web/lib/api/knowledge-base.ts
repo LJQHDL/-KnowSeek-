@@ -37,3 +37,7 @@ export async function uploadDocument(id: number, file: File) {
 export async function deleteDocument(id: number) {
   await api.delete(`/api/documents/${id}`);
 }
+
+export async function reindexDocument(id: number) {
+  await api.post(`/api/documents/${id}/reindex`);
+}

@@ -8,9 +8,11 @@ import com.example.copilot.common.DocumentStatusEnum;
 import com.example.copilot.common.DocumentTypeEnum;
 import com.example.copilot.dto.response.DocumentResponse;
 import com.example.copilot.entity.Document;
+import com.example.copilot.entity.DocumentChunk;
 import com.example.copilot.entity.KnowledgeBase;
 import com.example.copilot.exception.ForbiddenException;
 import com.example.copilot.exception.NotFoundException;
+import com.example.copilot.mapper.DocumentChunkMapper;
 import com.example.copilot.mapper.DocumentMapper;
 import com.example.copilot.mapper.KnowledgeBaseMapper;
 import org.springframework.stereotype.Service;
@@ -31,13 +33,16 @@ public class DocumentServiceImpl implements DocumentService {
 
     private final DocumentMapper documentMapper;
     private final KnowledgeBaseMapper knowledgeBaseMapper;
+    private final DocumentChunkMapper documentChunkMapper;
     private final DocumentProcessingService documentProcessingService;
 
     public DocumentServiceImpl(DocumentMapper documentMapper,
                                KnowledgeBaseMapper knowledgeBaseMapper,
+                               DocumentChunkMapper documentChunkMapper,
                                DocumentProcessingService documentProcessingService) {
         this.documentMapper = documentMapper;
         this.knowledgeBaseMapper = knowledgeBaseMapper;
+        this.documentChunkMapper = documentChunkMapper;
         this.documentProcessingService = documentProcessingService;
     }
 
@@ -101,6 +106,24 @@ public class DocumentServiceImpl implements DocumentService {
         ensureOwnership(userId, document.getKnowledgeBaseId());
         deleteStoredFileQuietly(document.getStoragePath());
         documentMapper.deleteById(documentId);
+    }
+
+    @Override
+    public void reindex(Long userId, Long documentId) {
+        Document document = documentMapper.selectById(documentId);
+        if (document == null) {
+            throw new NotFoundException("文档不存在");
+        }
+        ensureOwnership(userId, document.getKnowledgeBaseId());
+
+        documentChunkMapper.delete(new LambdaQueryWrapper<DocumentChunk>()
+                .eq(DocumentChunk::getDocumentId, documentId));
+
+        document.setStatus(DocumentStatusEnum.UPLOADED.name());
+        document.setErrorMessage(null);
+        documentMapper.updateById(document);
+
+        documentProcessingService.processDocumentAsync(documentId);
     }
 
     private void ensureOwnership(Long userId, Long knowledgeBaseId) {

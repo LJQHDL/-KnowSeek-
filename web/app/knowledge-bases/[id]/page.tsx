@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArrowRight } from "lucide-react";
-import { deleteDocument, getKnowledgeBase, listDocuments, uploadDocument } from "@/lib/api/knowledge-base";
+import { deleteDocument, getKnowledgeBase, listDocuments, reindexDocument, uploadDocument } from "@/lib/api/knowledge-base";
 import { useAppStore } from "@/hooks/use-app-store";
 import { Header } from "@/components/layout/header";
 import { DocumentList } from "@/components/knowledge-base/document-list";
@@ -20,6 +20,7 @@ export default function KnowledgeBaseDetailPage() {
   const knowledgeBaseId = Number(params.id);
   const [uploading, setUploading] = useState(false);
   const [deletingDocumentId, setDeletingDocumentId] = useState<number | null>(null);
+  const [reindexingId, setReindexingId] = useState<number | null>(null);
 
   const { data: kb } = useQuery({
     queryKey: ["knowledge-base", knowledgeBaseId],
@@ -73,6 +74,19 @@ export default function KnowledgeBaseDetailPage() {
     }
   }
 
+  async function handleReindex(documentId: number) {
+    setReindexingId(documentId);
+    try {
+      await reindexDocument(documentId);
+      addToast("已开始重建索引", "success");
+      await queryClient.invalidateQueries({ queryKey: ["documents", knowledgeBaseId] });
+    } catch {
+      addToast("重建索引失败", "error");
+    } finally {
+      setReindexingId(null);
+    }
+  }
+
   return (
     <div className="min-h-screen">
       <Header />
@@ -115,7 +129,7 @@ export default function KnowledgeBaseDetailPage() {
                 {documents.length} 个文档{hasProcessingDocuments ? " · 正在处理..." : ""}
               </p>
             </div>
-            <DocumentList documents={documents} onDelete={handleDeleteDocument} deletingId={deletingDocumentId} />
+            <DocumentList documents={documents} onDelete={handleDeleteDocument} deletingId={deletingDocumentId} onReindex={handleReindex} reindexingId={reindexingId} />
           </section>
         </div>
       </main>

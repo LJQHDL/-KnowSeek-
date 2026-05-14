@@ -73,4 +73,23 @@ public class AuthServiceImpl implements AuthService {
                 .eq(User::getEmail, request.email()));
         return new AuthResponse(user.getId(), user.getEmail(), user.getName(), token);
     }
+
+    @Override
+    public AuthResponse me(Long userId) {
+        User user = userMapper.selectById(userId);
+        if (user == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND, "用户不存在");
+        }
+        return new AuthResponse(user.getId(), user.getEmail(), user.getName(), null);
+    }
+
+    @Override
+    public AuthResponse refresh(Long userId) {
+        User user = userMapper.selectById(userId);
+        if (user == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND, "用户不存在");
+        }
+        String token = jwtTokenProvider.generateToken(user.getEmail());
+        return new AuthResponse(user.getId(), user.getEmail(), user.getName(), token);
+    }
 }

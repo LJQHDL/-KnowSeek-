@@ -15,4 +15,6 @@ public interface DocumentService {
     DocumentResponse getStatus(Long userId, Long documentId);
 
     void delete(Long userId, Long documentId);
+
+    void reindex(Long userId, Long documentId);
 }
