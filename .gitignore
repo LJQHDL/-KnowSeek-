@@ -27,4 +27,5 @@ web/out/
 Thumbs.db
 
 # Uploads
-server/uploads/
+server/storage/uploads/
+*.tsbuildinfo
