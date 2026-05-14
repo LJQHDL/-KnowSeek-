@@ -1,0 +1,15 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:copilot_dev}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:123456}
+
+logging:
+  level:
+    root: info
+    com.example.copilot.controller: debug
+    com.example.copilot.service: debug
+    com.example.copilot.mapper: debug
+    com.example.copilot.logging: debug
+    org.apache.ibatis: debug
+    com.baomidou.mybatisplus: info

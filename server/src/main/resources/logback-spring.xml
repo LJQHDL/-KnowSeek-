@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="60 seconds">
+
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
+
+    <property name="CONSOLE_LOG_PATTERN"
+              value="%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%-5level) %clr([%15.15thread]){faint} %clr([trace:%X{traceId:-N/A}]){yellow} %clr(%-40.40logger{39}){cyan} %clr(:%line){magenta} - %msg%n%wEx"/>
+
+    <springProfile name="dev">
+        <logger name="com.example.copilot.controller" level="DEBUG"/>
+        <logger name="com.example.copilot.service" level="DEBUG"/>
+        <logger name="com.example.copilot.mapper" level="DEBUG"/>
+        <logger name="com.example.copilot.logging" level="DEBUG"/>
+        <logger name="org.apache.ibatis" level="DEBUG"/>
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+        </root>
+    </springProfile>
+
+    <springProfile name="!dev">
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+        </root>
+    </springProfile>
+
+</configuration>
