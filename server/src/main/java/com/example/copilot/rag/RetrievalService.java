@@ -33,17 +33,21 @@ public class RetrievalService {
     }
 
     public RetrievalResult retrieveTopChunks(Long sessionId, String query, int topK) {
-        long start = System.currentTimeMillis();
         ChatSession session = chatSessionMapper.selectById(sessionId);
         if (session == null) {
             throw new NotFoundException("会话不存在");
         }
+        return retrieveByKnowledgeBaseId(session.getKnowledgeBaseId(), query, topK);
+    }
+
+    public RetrievalResult retrieveByKnowledgeBaseId(Long knowledgeBaseId, String query, int topK) {
+        long start = System.currentTimeMillis();
 
         String normalizedQuery = query == null ? "" : query.toLowerCase(Locale.ROOT);
-        List<DocumentChunk> candidates = vectorSearch(session.getKnowledgeBaseId(), normalizedQuery, topK);
+        List<DocumentChunk> candidates = vectorSearch(knowledgeBaseId, normalizedQuery, topK);
         if (candidates.isEmpty()) {
             candidates = documentChunkMapper.selectList(new LambdaQueryWrapper<DocumentChunk>()
-                    .eq(DocumentChunk::getKnowledgeBaseId, session.getKnowledgeBaseId())
+                    .eq(DocumentChunk::getKnowledgeBaseId, knowledgeBaseId)
                     .orderByAsc(DocumentChunk::getChunkIndex));
         }
 
